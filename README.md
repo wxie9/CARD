@@ -1,6 +1,6 @@
 # CARD
 
-1. Dataset can be obtained from Time Series Library (TSlib) at https://github.com/thuml/Time-Series-Library/tree/main
+1. Dataset can be obtained from Time Series Library (TSlib) at <https://github.com/thuml/Time-Series-Library/tree/main>
 
 2. The code for long-term forecasting experiment in section 5.1 is in folder `long_term_forecast_l96`. We provide the experiment scripts of all benchmarks under the folder `long_term_forecast_l96/scripts/CARD`. You can reproduce the multivariate experiments by running the following shell scripts:
 
