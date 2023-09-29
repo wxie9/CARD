@@ -47,7 +47,7 @@ python -u run_longExp.py \
     --des 'Exp' \
     --train_epochs 100\
     --patience 10 \
-    --itr 1 --batch_size 128 --learning_rate 0.0001 \
+    --itr 1 --batch_size 128 --learning_rate 0.0001 --merge_size 2 \
     --lradj CARD --warmup_epochs 10 \
   2>&1 | tee logs/LongForecasting/$model_name'_'$model_id_name'_'$seq_len'_'$pred_len.log \
   

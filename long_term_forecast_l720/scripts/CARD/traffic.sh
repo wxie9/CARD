@@ -45,6 +45,6 @@ do
       --des 'Exp' \
     --train_epochs 100\
       --patience 100 \
-      --itr 1 --batch_size 4 --learning_rate 0.001 \
+      --itr 1 --batch_size 4 --learning_rate 0.001 --merge_size 16 \
       --lradj CARD --warmup_epochs 20 
 done

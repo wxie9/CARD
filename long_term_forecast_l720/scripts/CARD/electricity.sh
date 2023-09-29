@@ -46,7 +46,7 @@ python -u run_longExp.py \
   --des 'Exp' \
   --train_epochs 100\
   --patience 100 \
-  --itr 1 --batch_size 32 --dp_rank 8 --learning_rate 0.0001 \
+  --itr 1 --batch_size 32 --dp_rank 8 --learning_rate 0.0001 --merge_size 16 \
   --lradj CARD --warmup_epochs 30 --use_multi_gpu --devices '0,1,2,3,4,5,6,7' 
 
 done

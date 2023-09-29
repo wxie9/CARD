@@ -3,6 +3,10 @@ if [ ! -d "./logs/LongForecasting" ]; then
 fi
 
 
+# export WANDB_BASE_URL="https://api.wandb.ai"
+# export WANDB_API_KEY=
+export WANDB_MODE=offline
+
 model_name=CARD
 pred_lens=(96 192 336 720)
 cuda_ids1=(0 1 2 3)

@@ -1,4 +1,11 @@
+if [ ! -d "./logs/LongForecasting" ]; then
+    mkdir -p ./logs/LongForecasting
+fi
 
+
+# export WANDB_BASE_URL="https://api.wandb.ai"
+# export WANDB_API_KEY=
+export WANDB_MODE=offline
 
 model_name=CARD
 

@@ -19,8 +19,11 @@ data_dict = {
 }
 
 
-def data_provider(args, flag):
-    Data = data_dict[args.data]
+def data_provider(args, flag,dataset = None):
+    if dataset is None:
+        Data = data_dict[args.data]
+    else:
+        Data = data_dict[dataset]
     timeenc = 0 if args.embed != 'timeF' else 1
 
     if flag == 'test':
@@ -30,6 +33,17 @@ def data_provider(args, flag):
             batch_size = args.batch_size
         else:
             batch_size = 1  # bsz=1 for evaluation
+        freq = args.freq
+    elif flag == 'val':
+        shuffle_flag = True
+        drop_last = False
+        batch_size = args.batch_size  # bsz for train and valid
+        freq = args.freq
+    elif flag == 'test0':
+        flag = 'test'
+        shuffle_flag = True
+        drop_last = False
+        batch_size = args.batch_size  # bsz for train and valid
         freq = args.freq
     else:
         shuffle_flag = True

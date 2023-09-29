@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from einops import rearrange
 import numpy as np
 
 class Transpose(nn.Module):
@@ -44,7 +45,6 @@ class CARDformer(nn.Module):
         self.stride = config.stride
         self.d_model = config.d_model
         self.task_name = config.task_name
-        
         patch_num = int((config.seq_len - self.patch_len)/self.stride + 1)
         self.patch_num = patch_num
         self.W_pos_embed = nn.Parameter(torch.randn(patch_num,config.d_model)*1e-2)
@@ -75,9 +75,7 @@ class CARDformer(nn.Module):
             self.W_out = nn.Linear(config.d_model*config.enc_in, config.num_class)
 
      
-
         
-
         
         self.Attentions_over_token = nn.ModuleList([Attenion(config) for i in range(config.e_layers)])
         self.Attentions_over_channel = nn.ModuleList([Attenion(config,over_hidden = True) for i in range(config.e_layers)])
@@ -93,7 +91,7 @@ class CARDformer(nn.Module):
 
         b,c,s = z.shape
         
-        
+
         if self.task_name == 'long_term_forecast' or self.task_name == 'short_term_forecast' or self.task_name == 'anomaly_detection':
             z_mean = torch.mean(z,dim = (-1),keepdims = True)
             z_std = torch.std(z,dim = (-1),keepdims = True)
@@ -141,16 +139,17 @@ class CARDformer(nn.Module):
             z_out = self.W_out(outputs.reshape(b,c,-1))  
             z = z_out *(z_std+1e-4)  + z_mean 
         else:
-            z = self.W_out(outputs[:,:,0,:].reshape(b,-1))
+            z = self.W_out(torch.mean(outputs[:,:,:,:],dim = -2).reshape(b,-1))
         return z
     
 
 class Attenion(nn.Module):
-    def __init__(self,config, over_hidden = False,trianable_smooth = False, *args, **kwargs):
+    def __init__(self,config, over_hidden = False,trianable_smooth = False,untoken = False, *args, **kwargs):
         super().__init__()
 
         
         self.over_hidden = over_hidden
+        self.untoken = untoken
         self.n_heads = config.n_heads
         self.c_in = config.enc_in
         self.qkv = nn.Linear(config.d_model, config.d_model * 3, bias=True)
@@ -188,8 +187,8 @@ class Attenion(nn.Module):
                         nn.Dropout(config.dropout),
                         nn.Linear(config.d_ff, config.d_model, bias=True)
                                 )     
+        self.merge_size = config.merge_size
 
-        # if not trianable_smooth:
         ema_size = max(config.enc_in,config.total_token_number,config.dp_rank)
         ema_matrix = torch.zeros((ema_size,ema_size))
         alpha = config.alpha
@@ -199,16 +198,7 @@ class Attenion(nn.Module):
                 ema_matrix[i][j] =  ema_matrix[i-1][j]*(1-alpha)
             ema_matrix[i][i] = alpha
         self.register_buffer('ema_matrix',ema_matrix)
-            
-#             self.ema = self.ema_fix
-#         else:
-#             self.alpha = nn.Parameter(torch.zeros((1,1)))
-#             ema_size = max(config.enc_in,config.total_token_number,config.dp_rank)
-#             arange = torch.arange(ema_size)
-#             arange = torch.flip(arange, dims = (0,))  
-#             self.register_buffer('arange',arange)
-
-#             self.ema = self.ema_fix
+ 
            
 
        
@@ -268,7 +258,7 @@ class Attenion(nn.Module):
             v_dp,k_dp = self.dynamic_projection(v,self.dp_v) , self.dynamic_projection(k,self.dp_k)
             attn_score_along_token = torch.einsum('bnhed,bnhfd->bnhef', self.ema(q), self.ema(k_dp))/ self.head_dim ** -0.5
             
-            # attn_score_along_token = torch.einsum('bnhed,bnhfd->bnhef', q,k_dp)/ self.head_dim ** -0.5
+
             attn_along_token = self.attn_dropout(F.softmax(attn_score_along_token, dim=-1) )
             output_along_token = torch.einsum('bnhef,bnhfd->bnhed', attn_along_token, v_dp)
 
@@ -280,11 +270,22 @@ class Attenion(nn.Module):
 
 
 
-        output1 = output_along_token.reshape(B*nvars, -1, self.n_heads * self.head_dim)
+        merge_size = self.merge_size
+        if not self.untoken:
+            output1 = rearrange(output_along_token.reshape(B*nvars,-1,self.head_dim),
+                            'bn (hl1 hl2 hl3) d -> bn  hl2 (hl3 hl1) d', 
+                            hl1 = self.n_heads//merge_size, hl2 = output_along_token.shape[-2] ,hl3 = merge_size
+                            ).reshape(B*nvars,-1,self.head_dim*self.n_heads)
+        
+        
+            output2 = rearrange(output_along_hidden.reshape(B*nvars,-1,self.head_dim),
+                            'bn (hl1 hl2 hl3) d -> bn  hl2 (hl3 hl1) d', 
+                            hl1 = self.n_heads//merge_size, hl2 = output_along_token.shape[-2] ,hl3 = merge_size
+                            ).reshape(B*nvars,-1,self.head_dim*self.n_heads)
+        
+
         output1 = self.norm_post1(output1)
         output1 = output1.reshape(B,nvars, -1, self.n_heads * self.head_dim)
-        
-        output2 = output_along_hidden.reshape(B*nvars, -1, self.n_heads * self.head_dim)
         output2 = self.norm_post2(output2)
         output2 = output2.reshape(B,nvars, -1, self.n_heads * self.head_dim)
 

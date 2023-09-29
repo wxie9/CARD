@@ -9,11 +9,11 @@ from exp.exp_classification import Exp_Classification
 import random
 import numpy as np
 
+
+
 if __name__ == '__main__':
-    fix_seed = 2021
-    random.seed(fix_seed)
-    torch.manual_seed(fix_seed)
-    np.random.seed(fix_seed)
+
+   
 
     parser = argparse.ArgumentParser(description='TimesNet')
 
@@ -119,11 +119,13 @@ if __name__ == '__main__':
     parser.add_argument('--same_smoothing',action='store_true', default=False)
     parser.add_argument('--warmup_epochs',type=int,default = 0)
     parser.add_argument('--weight_decay',type=float,default = 0)
-    
+    parser.add_argument('--merge_size',type=int,default = 2)
+    parser.add_argument('--use_untoken',type=int,default = 0)
     parser.add_argument('--pct_start',type=float,default = 0.3)
-
+    
     parser.add_argument('--seg_len', type=int, default=6, help='segment length (L_seg)')
     parser.add_argument('--win_size', type=int, default=2, help='window size for segment merge')
+    parser.add_argument('--fix_seed', type = str,default='None')
 
     args = parser.parse_args()
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
@@ -136,7 +138,15 @@ if __name__ == '__main__':
 
     print('Args in experiment:')
     print(args)
+    if args.fix_seed != 'None':
+        fix_seed = int(args.fix_seed)
+        random.seed(fix_seed)
+        torch.manual_seed(fix_seed)
+        np.random.seed(fix_seed)
 
+    import wandb
+    wandb.init(config=args)
+    wandb.run.log_code(".")
     if args.task_name == 'long_term_forecast':
         Exp = Exp_Long_Term_Forecast
     elif args.task_name == 'short_term_forecast':

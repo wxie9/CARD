@@ -6,6 +6,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import numpy as np
+from einops import rearrange
 
 class Transpose(nn.Module):
     def __init__(self, *dims, contiguous=False): 
@@ -165,7 +166,7 @@ class Attenion(nn.Module):
                         nn.Dropout(config.dropout),
                         nn.Linear(config.d_ff, config.d_model, bias=True)
                                 )     
-
+        self.merge_size = config.merge_size
         # if not trianable_smooth:
         ema_size = max(config.enc_in,config.total_token_number,config.dp_rank)
         ema_matrix = torch.zeros((ema_size,ema_size))
@@ -246,11 +247,22 @@ class Attenion(nn.Module):
 
 
 
-        output1 = output_along_token.reshape(B*nvars, -1, self.n_heads * self.head_dim)
+        merge_size = self.merge_size
+
+        output1 = rearrange(output_along_token.reshape(B*nvars,-1,self.head_dim),
+                            'bn (hl1 hl2 hl3) d -> bn  hl2 (hl3 hl1) d', 
+                            hl1 = self.n_heads//merge_size, hl2 = output_along_token.shape[-2] ,hl3 = merge_size
+                            ).reshape(B*nvars,-1,self.head_dim*self.n_heads)
+        
+        
+        output2 = rearrange(output_along_hidden.reshape(B*nvars,-1,self.head_dim),
+                            'bn (hl1 hl2 hl3) d -> bn  hl2 (hl3 hl1) d', 
+                            hl1 = self.n_heads//merge_size, hl2 = output_along_token.shape[-2] ,hl3 = merge_size
+                            ).reshape(B*nvars,-1,self.head_dim*self.n_heads)
+        
+
         output1 = self.norm_post1(output1)
         output1 = output1.reshape(B,nvars, -1, self.n_heads * self.head_dim)
-        
-        output2 = output_along_hidden.reshape(B*nvars, -1, self.n_heads * self.head_dim)
         output2 = self.norm_post2(output2)
         output2 = output2.reshape(B,nvars, -1, self.n_heads * self.head_dim)
 

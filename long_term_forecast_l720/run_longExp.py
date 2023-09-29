@@ -98,7 +98,7 @@ parser.add_argument('--alpha', type=float, default=0.5)
 parser.add_argument('--beta', type=float, default=0.5)
 parser.add_argument('--dp_rank', type=int,default = 8)
 parser.add_argument('--rescale', type=int,default = 1)
-
+parser.add_argument('--merge_size',type=int,default = 2)
 parser.add_argument('--momentum', type=float,default = 0.1)
 parser.add_argument('--local_rank', type=int,default = 0)
 parser.add_argument('--devices_number',type=int,default = 1)
