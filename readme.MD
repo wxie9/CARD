@@ -9,10 +9,18 @@ This the Official repository contains PyTorch codes for CARD: Channel Aligned Ro
 **Dual Attention**: Explore the within patch information.
 
 **Token Blend**: Utilize mutli-scale knowledge.
+<p align="center">
+<!-- ![fig1](./figures/main.png) -->
+<img src="/figures/main.png" alt="drawing" width="800"/>
+</p>
 
-![fig1](./figures/main.png)
-![fig2](./figures/dual.png)
-![fig3](./figures/blend.png)
+<p align="center">
+<!-- ![fig1](./figures/main.png) -->
+<img src="/figures/dual.png" alt="drawing" width="600"/>
+<img src="/figures/blend.png" alt="drawing" width="600"/>
+</p>
+<!-- ![fig2](./figures/dual.png) -->
+<!-- ![fig3](./figures/blend.png) -->
 
 ## Main Results
 
