@@ -139,7 +139,7 @@ if __name__ == '__main__':
     print('Args in experiment:')
     print(args)
     if args.fix_seed != 'None':
-        fix_seed = int(args.fix_seed)#114514#
+        fix_seed = int(args.fix_seed)
         random.seed(fix_seed)
         torch.manual_seed(fix_seed)
         np.random.seed(fix_seed)
