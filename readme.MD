@@ -5,15 +5,18 @@ This the Official repository contains PyTorch codes for CARD: Channel Aligned Ro
 ## Designs
 
 **Channel Alignment**: Allow information share among different channels/covariates.
+
 **Dual Attention**: Explore the within patch information.
+
 **Token Blend**: Utilize mutli-scale knowledge.
 
 ![fig1](./figures/main.png)
-![alt text](./figures/dual.png)
-![alt text](./figures/blend.png)
+![fig2](./figures/dual.png)
+![fig3](./figures/blend.png)
 
 ## Main Results
 
+![fig4](./figures/results.png)
 
 
 ## Get Started
