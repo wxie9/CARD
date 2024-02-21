@@ -2,6 +2,21 @@
 
 This Official repository contains PyTorch codes for CARD: Channel Aligned Robust Blend Transformer for Time Series Forecasting [paper](https://arxiv.org/abs/2305.12095).
 
+## Citing CARD
+> 🌟 If you find this resource helpful, please consider to star this repository and cite our research:
+
+```tex
+@inproceedings{xue2024card,
+  title={CARD: Channel Aligned Robust Blend Transformer for Time Series Forecasting},
+  author={Xue, Wang and Zhou, Tian and Wen, QingSong and Gao, Jinyang and Ding, Bolin and Jin, Rong},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2024}
+}
+```
+In case of any questions, bugs, suggestions or improvements, please feel free to open an issue.
+
+
+
 ## Designs
 
 **Channel Alignment**: Allow information to be shared among different channels/covariates.
@@ -75,28 +90,20 @@ https://github.com/thuml/Time-Series-Library
 If you have any questions or concerns, please contact us: xue.w@alibaba-inc.com or tian.zt@alibaba-inc.com
 
 
-## Citation
 
-If you find this repo useful in your research, please consider citing our paper as follows:
 
-```
-@article{xue2023make,
-  title={CARD: Channel Aligned Robust Blend Transformer for Time Series Forecasting},
-  author={Xue, Wang and Zhou, Tian and Wen, QingSong and Gao, Jinyang and Ding, Bolin and Jin, Rong},
-  journal={arXiv preprint arXiv:2305.12095},
+
+## Further Reading
+1, [**Transformers in Time Series: A Survey**](https://arxiv.org/abs/2202.07125), in IJCAI 2023.
+[\[GitHub Repo\]](https://github.com/qingsongedu/time-series-transformers-review)
+
+```bibtex
+@inproceedings{wen2023transformers,
+  title={Transformers in time series: A survey},
+  author={Wen, Qingsong and Zhou, Tian and Zhang, Chaoli and Chen, Weiqi and Ma, Ziqing and Yan, Junchi and Sun, Liang},
+  booktitle={International Joint Conference on Artificial Intelligence(IJCAI)},
   year={2023}
 }
 ```
 
 
-<!-- ```
-@inproceedings{xue2023make,
-  title     = {A Time Series is Worth 64 Words: Long-term Forecasting with Transformers},
-  author    = {Nie, Yuqi and
-               H. Nguyen, Nam and
-               Sinthong, Phanwadee and 
-               Kalagnanam, Jayant},
-  booktitle = {International Conference on Learning Representations},
-  year      = {2024}
-}
-``` -->
