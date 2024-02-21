@@ -1,12 +1,12 @@
-# CARD
+# (ICLR'24) CARD: Channel Aligned Robust Blend Transformer for Time Series Forecasting
 
-This the Official repository contains PyTorch codes for CARD: Channel Aligned Robust Blend Transformer for Time Series Forecasting [paper](https://arxiv.org/abs/2305.12095).
+This Official repository contains PyTorch codes for CARD: Channel Aligned Robust Blend Transformer for Time Series Forecasting [paper](https://arxiv.org/abs/2305.12095).
 
 ## Designs
 
-**Channel Alignment**: Allow information share among different channels/covariates.
+**Channel Alignment**: Allow information to be shared among different channels/covariates.
 
-**Dual Attention**: Explore the within patch information.
+**Dual Attention**: Explore the within-patch information.
 
 **Token Blend**: Utilize mutli-scale knowledge.
 <p align="center">
